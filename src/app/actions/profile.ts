@@ -41,18 +41,20 @@ export async function completeOnboarding(formData: FormData) {
   const allergies = allergiesRaw ? allergiesRaw.split(',').map(a => a.trim()).filter(Boolean) : [];
 
   const profileUpdates = {
+    id: user.id,
+    full_name: user.user_metadata?.full_name || null,
     date_of_birth: formData.get('date_of_birth') as string || null,
     blood_type: formData.get('blood_type') as string || null,
     allergies,
     onboarding_completed: true,
   };
 
+  // Use upsert so this works even if the trigger didn't create the row
   const { error } = await supabase
     .from('users')
-    .update(profileUpdates)
-    .eq('id', user.id);
+    .upsert(profileUpdates, { onConflict: 'id' });
 
-  if (error) return { error: 'Failed to complete onboarding' };
+  if (error) return { error: `Failed to complete onboarding: ${error.message}` };
 
   // If user added a first record
   const recordTitle = formData.get('first_record_title') as string;
