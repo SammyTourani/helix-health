@@ -9,7 +9,7 @@ export async function signUp(formData: FormData) {
   const password = formData.get('password') as string;
   const fullName = formData.get('full_name') as string;
 
-  const { error } = await supabase.auth.signUp({
+  const { error: signUpError } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -17,8 +17,19 @@ export async function signUp(formData: FormData) {
     },
   });
 
-  if (error) {
-    return { error: error.message };
+  if (signUpError) {
+    return { error: signUpError.message };
+  }
+
+  // Immediately sign in to establish a session (auto-confirm must be enabled in Supabase)
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (signInError) {
+    // Sign up worked but auto-confirm may be off — redirect to check email page
+    return { error: 'Account created! Please check your email to confirm your account, then sign in.' };
   }
 
   redirect('/onboarding');
