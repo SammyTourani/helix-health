@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Groq from 'groq-sdk';
 import { revalidatePath } from 'next/cache';
+import { calculateAge } from '@/lib/date';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -35,9 +36,7 @@ export async function generateAIBrief(specialty: string) {
   const labs = records.filter((r: { type: string }) => r.type === 'lab').slice(0, 5);
   const recentVisits = records.filter((r: { type: string }) => r.type === 'visit').slice(0, 5);
 
-  const age = profile?.date_of_birth
-    ? Math.floor((Date.now() - new Date(profile.date_of_birth).getTime()) / 31557600000)
-    : 'Unknown';
+  const age = calculateAge(profile?.date_of_birth) ?? 'Unknown';
 
   const prompt = `You are a medical AI assistant generating a pre-appointment health brief for a ${specialty} appointment.
 

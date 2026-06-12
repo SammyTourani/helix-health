@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
+import { calculateAge } from '@/lib/date';
 import type { HealthRecord, ShareLink, User } from '@/types';
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -32,9 +33,7 @@ export function SharedRecordView({ data }: SharedRecordViewProps) {
   const conditions = records.filter(r => r.type === 'condition' && r.status === 'active');
   const medications = records.filter(r => r.type === 'medication' && r.status === 'active');
 
-  const age = profile?.date_of_birth
-    ? Math.floor((Date.now() - new Date(profile.date_of_birth).getTime()) / 31557600000)
-    : null;
+  const age = calculateAge(profile?.date_of_birth);
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-[#f8fafc]">

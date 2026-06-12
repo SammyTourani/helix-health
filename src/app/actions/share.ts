@@ -3,23 +3,14 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { nanoid } from 'nanoid';
+import { computeExpiresAt, parseFilterSpecialties } from '@/lib/share';
 
 export async function createShareLinkAction(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const expiryOption = formData.get('expiry') as string;
-  let expiresAt: string | null = null;
-  if (expiryOption === '1day') {
-    expiresAt = new Date(Date.now() + 86400000).toISOString();
-  } else if (expiryOption === '1week') {
-    expiresAt = new Date(Date.now() + 7 * 86400000).toISOString();
-  } else if (expiryOption === '1month') {
-    expiresAt = new Date(Date.now() + 30 * 86400000).toISOString();
-  }
-
-  const filterSpecialties = formData.get('filter_specialties') as string;
+  const expiresAt = computeExpiresAt(formData.get('expiry') as string);
 
   const shareLink = {
     user_id: user.id,
@@ -27,7 +18,7 @@ export async function createShareLinkAction(formData: FormData) {
     recipient_name: formData.get('recipient_name') as string || null,
     purpose: formData.get('purpose') as string || null,
     access_level: (formData.get('access_level') as string) || 'summary',
-    filter_specialties: filterSpecialties ? filterSpecialties.split(',').map(s => s.trim()) : [],
+    filter_specialties: parseFilterSpecialties(formData.get('filter_specialties') as string),
     expires_at: expiresAt,
     is_active: true,
   };

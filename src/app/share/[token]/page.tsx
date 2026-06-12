@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { SharedRecordView } from '@/components/dashboard/shared-record-view';
+import { isShareLinkExpired } from '@/lib/share';
 
 async function getShareData(token: string) {
   const cookieStore = await cookies();
@@ -27,7 +28,7 @@ async function getShareData(token: string) {
   if (!link) return null;
 
   // Check expiry
-  if (link.expires_at && new Date(link.expires_at) < new Date()) return null;
+  if (isShareLinkExpired(link.expires_at)) return null;
 
   // Increment view count
   await supabase
