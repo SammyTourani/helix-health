@@ -197,3 +197,19 @@ create policy "Users can insert own AI summaries"
   on public.ai_summaries for insert with check (auth.uid() = user_id);
 create policy "Users can delete own AI summaries"
   on public.ai_summaries for delete using (auth.uid() = user_id);
+
+-- Increment a share link's view counter and stamp last-viewed time.
+-- Called from src/lib/db/share.ts when an active share token is opened.
+-- security definer so an unauthenticated share viewer can record a view
+-- without owning the row (matches handle_new_user above).
+create or replace function public.increment_share_view(share_token text)
+returns void as $$
+begin
+  update public.share_links
+  set view_count = coalesce(view_count, 0) + 1,
+      viewed_at = now()
+  where token = share_token
+    and is_active = true
+    and (expires_at is null or expires_at > now());
+end;
+$$ language plpgsql security definer;
