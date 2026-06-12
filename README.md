@@ -1,5 +1,7 @@
 # Helix Health
 
+[![CI](https://github.com/SammyTourani/helix-health/actions/workflows/ci.yml/badge.svg)](https://github.com/SammyTourani/helix-health/actions/workflows/ci.yml)
+
 A patient-owned, unified health-record web app. You log your own conditions, medications, visits, labs, imaging, procedures, and vaccinations into a single timeline, control which providers can see them, share read-only links with expiry and view tracking, and generate AI pre-appointment briefs tailored to a specialty.
 
 ## Features
