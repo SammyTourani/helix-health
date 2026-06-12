@@ -6,7 +6,7 @@ A patient-owned, unified health-record web app. You log your own conditions, med
 
 - **Unified health timeline** — one chronological view across seven record types: conditions, medications, visits, labs, imaging, procedures, and vaccinations.
 - **Records management** — create, edit, and delete records, each with a date, status, optional specialty, notes, and free-form metadata (e.g. dosage and frequency for medications).
-- **Providers** — track your care team and set a per-provider access level (`full`, `filtered`, or `summary`).
+- **Providers** — track your care team and set a per-provider access level (`full`, `relevant`, or `summary_only`).
 - **Share links** — generate token-based, read-only links to your record. Each link has an access level, an optional expiry, optional specialty filtering, can be revoked, and tracks view count and last-viewed time.
 - **AI pre-appointment briefs** — generate a structured, specialty-specific brief (patient summary, relevant conditions, current medications, recent activity, key cautions) from your records using Groq-hosted Llama 3.3 70B. Generated briefs are saved back to your account.
 - **Onboarding wizard** — guided first-run flow to set up the basic profile.
